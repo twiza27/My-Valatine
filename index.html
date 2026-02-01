@@ -3,32 +3,37 @@
 <head>
 <meta charset="UTF-8">
 <title>Be My Valentine 💖</title>
+
 <style>
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  overflow: hidden;
   height: 100vh;
-  background: linear-gradient(to right, #ff758c, #ff7eb3);
+  overflow: hidden;
   display: flex;
   justify-content: center;
   align-items: center;
+  background: linear-gradient(-45deg, #ff758c, #ff7eb3, #ff4d6d, #ffc3a0);
+  background-size: 400% 400%;
+  animation: bg 12s ease infinite;
 }
 
-/* Card design */
+@keyframes bg {
+  0% {background-position: 0% 50%;}
+  50% {background-position: 100% 50%;}
+  100% {background-position: 0% 50%;}
+}
+
 .card {
   background: white;
   padding: 30px;
   border-radius: 20px;
   text-align: center;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
   z-index: 10;
-  position: relative;
 }
 
-h1 {
-  color: #e91e63;
-}
+h1 { color: #e91e63; }
 
 button {
   padding: 12px 25px;
@@ -37,90 +42,106 @@ button {
   border-radius: 30px;
   font-size: 16px;
   cursor: pointer;
-  position: relative;
 }
 
 .yes {
-  background-color: #e91e63;
+  background: #e91e63;
   color: white;
 }
 
 .no {
-  background-color: #555;
+  background: #555;
   color: white;
+  position: relative;
 }
 
 /* Floating hearts */
 .heart {
-  width: 20px;
-  height: 20px;
-  position: absolute;
-  background-color: #ff4d6d;
-  transform: rotate(45deg);
-  animation: float 4s linear infinite;
+  position: fixed;
+  bottom: -20px;
+  font-size: 20px;
+  animation: float 6s linear infinite;
 }
-
-.heart::before,
-.heart::after {
-  content: "";
-  width: 20px;
-  height: 20px;
-  background-color: #ff4d6d;
-  border-radius: 50%;
-  position: absolute;
-}
-
-.heart::before { top: -10px; left: 0; }
-.heart::after { left: 10px; top: 0; }
 
 @keyframes float {
-  0% { transform: translateY(0) rotate(45deg); opacity: 1; }
-  100% { transform: translateY(-800px) rotate(45deg); opacity: 0; }
+  0% { transform: translateY(0); opacity: 1; }
+  100% { transform: translateY(-120vh); opacity: 0; }
+}
+
+/* Heart explosion */
+@keyframes rise {
+  to {
+    transform: translateY(-120vh);
+    opacity: 0;
+  }
 }
 </style>
 </head>
+
 <body>
 
-<!-- Background music -->
-<audio autoplay loop>
-  <source src="https://raw.githubusercontent.com/twiza27/Valentine/main/ordinary.mp3" type="audio/mpeg">
+<audio id="music" loop>
+  <source src="ordinary.mp3" type="audio/mpeg">
 </audio>
 
 <div class="card">
   <h1>💘 Valentine 💘</h1>
-  <p><strong>Idah Sekelani Mbewe</strong>,<br>will you be my Valentine? 💕</p>
+  <p><strong>Idah Sekelani Mbewe</strong>,<br>
+  will you be my Valentine? 💕</p>
 
   <form action="https://formsubmit.co/twizamungomba@gmail.com" method="POST">
-    <button class="yes" type="submit" name="Answer" value="YES ❤️" onclick="yesMessage()">Yes ❤️</button>
+    <button class="yes" type="submit" name="Answer" value="YES ❤️" onclick="yesClick()">Yes ❤️</button>
     <button class="no" type="button" id="noBtn">No 💔</button>
 
     <input type="hidden" name="_subject" value="Valentine Response 💌">
     <input type="hidden" name="_captcha" value="false">
   </form>
+
+  <p id="secret" style="display:none;color:#e91e63;margin-top:15px;">
+    💞 You just made my heart very happy 💞
+  </p>
 </div>
 
 <script>
-// Create floating hearts
-for(let i=0;i<20;i++){
-  let heart=document.createElement('div');
-  heart.className='heart';
-  heart.style.left=Math.random()*100+'vw';
-  heart.style.animationDuration=(2+Math.random()*3)+'s';
-  heart.style.fontSize=(10+Math.random()*10)+'px';
-  document.body.appendChild(heart);
-}
+// Floating hearts
+setInterval(() => {
+  let h = document.createElement("div");
+  h.className = "heart";
+  h.innerHTML = "💖";
+  h.style.left = Math.random()*100 + "vw";
+  h.style.animationDuration = (4 + Math.random()*4) + "s";
+  document.body.appendChild(h);
+  setTimeout(() => h.remove(), 6000);
+}, 300);
 
-// Move No button when hovered
-let noBtn = document.getElementById('noBtn');
-noBtn.addEventListener('mouseover', function(){
-  noBtn.style.position = 'absolute';
-  noBtn.style.top = Math.random()*80+'vh';
-  noBtn.style.left = Math.random()*80+'vw';
+// NO button runs away
+const noBtn = document.getElementById("noBtn");
+noBtn.addEventListener("mouseenter", () => {
+  noBtn.style.position = "fixed";
+  noBtn.style.left = Math.random()*90 + "vw";
+  noBtn.style.top = Math.random()*90 + "vh";
 });
 
-// Show message when Yes clicked
-function yesMessage(){
-  alert("💖 Yay! You clicked YES! 💖");
+// YES click
+function yesClick(){
+  document.getElementById("music").play();
+  document.getElementById("secret").style.display = "block";
+
+  for(let i=0;i<40;i++){
+    let e = document.createElement("div");
+    e.innerHTML = "💖";
+    e.style.position = "fixed";
+    e.style.left = Math.random()*100 + "vw";
+    e.style.bottom = "0";
+    e.style.fontSize = "24px";
+    e.style.animation = "rise 3s ease-out forwards";
+    document.body.appendChild(e);
+    setTimeout(() => e.remove(), 3000);
+  }
+
+  if(navigator.vibrate){
+    navigator.vibrate([200,100,200]);
+  }
 }
 </script>
 
